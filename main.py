@@ -4,20 +4,12 @@ import random
 
 
 def check_win(pl):
-    for i in range(3):
-        str_win = ''.join(pl[i][i1] for i1 in range(3))
-        if str_win == 'XXX' or str_win == 'OOO':
-            return True
-    for i in range(3):
-        str_win = ''.join(pl[i1][i] for i1 in range(3))
-        if str_win == 'XXX' or str_win == 'OOO':
-            return True
-    str_win = ''.join(pl[i][-(i-2)] for i in range(3))
-    if str_win == 'XXX' or str_win == 'OOO':
-        return True
-    str_win = ''.join(pl[i][i] for i in range(3))
-    if str_win == 'XXX' or str_win == 'OOO':
-        return True
+    lst_win = list()
+    lst_win += [''.join(pl[i][j] for j in range(3)) for i in range(3)]
+    lst_win += [''.join(pl[j][i] for j in range(3)) for i in range(3)]
+    lst_win.append(''.join(pl[i][-(i-2)] for i in range(3)))
+    lst_win.append(''.join(pl[i][i] for i in range(3)))
+    return 'XXX' in lst_win or 'OOO' in lst_win
 
 
 def player_hit(pl):
