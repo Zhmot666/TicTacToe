@@ -36,43 +36,51 @@ def player_hit(pl):
     return hit
 
 
-def computer_hit(pl, c_h, w_s):
-    if c_h == 1:
-        return 22
-    elif c_h == 2 and pl[1][1] == ' ':
-        return 22
-    elif c_h == 2 and pl[1][1] != ' ':
-        return random.choice([11, 13, 31, 33])
-    pre_win_combo = ['++ ', '+ +', ' ++']
-    l_s = lst_state(pl)
-    for j in ['C', 'P']:
-        index, combo = -1, -1
-        for i in pre_win_combo:
-            try:
-                index = l_s.index(i.replace('+', w_s[j]))
-                combo = i
-            except ValueError:
-                pass
-            if index != -1:
-                break
-        if combo == '++ ':
-            if 0 <= index <= 2:
-                return ((index+1) * 10) + 3
-            elif 3 <= index <= 5:
-                return 28 + index
-        elif combo == '+ +':
-            if 0 <= index <= 2:
-                return ((index+1) * 10) + 2
-            elif 3 <= index <= 5:
-                return 18 + index
-            else:
-                return 22
-
-        elif combo == ' ++':
-            if 0 <= index <= 2:
-                return ((index+1) * 10) + 1
-            elif 3 <= index <= 5:
-                return 16 - index
+def computer_hit(pl, c_h, w_s, c_c):
+    if c_c:
+        if c_h == 1:
+            return 22
+        elif c_h == 2 and pl[1][1] == ' ':
+            return 22
+        elif c_h == 2 and pl[1][1] != ' ':
+            return random.choice([11, 13, 31, 33])
+        pre_win_combo = ['++ ', '+ +', ' ++']
+        l_s = lst_state(pl)
+        for j in ['C', 'P']:
+            index, combo = -1, -1
+            for i in pre_win_combo:
+                try:
+                    index = l_s.index(i.replace('+', w_s[j]))
+                    combo = i
+                except ValueError:
+                    pass
+                if index != -1:
+                    break
+            if combo == '++ ':
+                if 0 <= index <= 2:
+                    return ((index+1) * 10) + 3
+                elif 3 <= index <= 5:
+                    return 28 + index
+                elif index == 6:
+                    return 31
+                elif index == 7:
+                    return 33
+            elif combo == '+ +':
+                if 0 <= index <= 2:
+                    return ((index+1) * 10) + 2
+                elif 3 <= index <= 5:
+                    return 18 + index
+                else:
+                    return 22
+            elif combo == ' ++':
+                if 0 <= index <= 2:
+                    return ((index+1) * 10) + 1
+                elif 3 <= index <= 5:
+                    return 16 - index
+                elif index == 6:
+                    return 13
+                elif index == 7:
+                    return 11
     while True:
         y = random.randint(1, 3)
         x = random.randint(1, 3)
@@ -131,7 +139,14 @@ while True:
         if who_play == 'P':
             hit_position = player_hit(place)
         else:
-            hit_position = computer_hit(place, count_hit, what_symbols)
+            control_computer = True
+            hit_position = computer_hit(place, count_hit, what_symbols, control_computer)
+            if place[(hit_position // 10) - 1][(hit_position % 10) - 1] != ' ':
+                print('Компьютер допустил ошибку в расчетах. Ход будет сгенерирован в случайную пустую клетку. '
+                      'Читайте лог-файл для выяснения обстоятельств.')
+                control_computer = False
+            if not control_computer:
+                hit_position = computer_hit(place, count_hit, what_symbols, control_computer)
         place[(hit_position // 10) - 1][(hit_position % 10) - 1] = what_symbols[who_play]
         loggers['Ход ' + str(count_hit)] = [who_play, what_symbols[who_play], str(hit_position)]
         if check_win(place):
