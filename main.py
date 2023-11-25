@@ -1,6 +1,7 @@
 import datetime
 from os import system as os_sys
 import random
+import json
 
 
 def lst_state(pl):
@@ -122,16 +123,18 @@ print('Я тут подкинул монетку. Первый крестика�
     print('Я тут подкинул монетку. Первый крестиками играю Я. Верь мне на слово )))'))
 input('Для продолжения нажмите Enter')
 os_sys('cls')
-count_match = 0
-with open('3Ton.log', 'a+', encoding='utf-8') as log_file:
-    print('Партия начата ', datetime.datetime.now(), file=log_file)
+count_party = 0
+# with open('3Ton.log', 'a+', encoding='utf-8') as log_file:
+#     print('Партия начата ', datetime.datetime.now(), file=log_file)
+loggers = dict()
+loggers['Соперник'] = player_name
 while True:
     place = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
     who_play = 'P' if what_symbols['P'] == 'X' else 'C'
-    count_match += 1
-    loggers = dict()
-    loggers['Матч'] = count_match
-    loggers['Соперник'] = player_name
+    count_party += 1
+    loggers['Партия ' + str(count_party)] = dict()
+    loggers['Партия ' + str(count_party)]['Кто начал'] = who_play
+    hit_list = list()
     count_hit = 0
     while True:
         count_hit += 1
@@ -147,8 +150,9 @@ while True:
                 control_computer = False
             if not control_computer:
                 hit_position = computer_hit(place, count_hit, what_symbols, control_computer)
+        hit_list.append(hit_position)
         place[(hit_position // 10) - 1][(hit_position % 10) - 1] = what_symbols[who_play]
-        loggers['Ход ' + str(count_hit)] = [who_play, what_symbols[who_play], str(hit_position)]
+        # loggers['Ход ' + str(count_hit)] = [who_play, what_symbols[who_play], str(hit_position)]
         if check_win(place):
             draw_place(score, place, player_name, what_symbols)
             winner = player_name if who_play == 'P' else '3Ton'
@@ -162,8 +166,10 @@ while True:
             what_symbols['P'], what_symbols['C'] = what_symbols['C'], what_symbols['P']
             break
         who_play = 'P' if who_play == 'C' else 'C'
-    with open('3Ton.log', 'a+', encoding='utf-8') as log_file:
-        print(loggers, file=log_file)
+        loggers['Партия ' + str(count_party)]['Ходы'] = hit_list
     if input('Будем играть еще? (Да(или Enter)/Нет) ') == 'Нет':
         print('Конец игры!')
         break
+file_name = 'Logs\\' + str(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')) + '.json'
+with open(file_name, 'w', encoding='utf-8') as log_file:
+    json.dump(loggers, log_file, ensure_ascii=False, indent=4)
