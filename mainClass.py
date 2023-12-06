@@ -2,19 +2,18 @@ import os
 import random
 
 
-class NewGame:
+class TicTacToe:
     player_score = 0
     computer_score = 0
     player_mark = ''
     computer_mark = ''
     player_name = ''
-    place = list()
+    exit_game = True
+    place = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
+    who_hit = ''
 
     def __init__(self):
         mark_list = ['X', 'O']
-        self.place = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
-        self.player_score = 0
-        self.computer_score = 0
         self.player_mark = random.choice(mark_list)
         self.computer_mark = 'O' if self.player_mark == 'X' else 'X'
         print('Привет! Меня зовут 3Ton, я суперкомпьютер по игре в Крестики Нолики')
@@ -28,6 +27,7 @@ class NewGame:
         print('Ладно. Хватит разговоров. Проведем жеребьевку кто будет первым играть крестиками.')
         self.player_mark = random.choice(mark_list)
         self.computer_mark = 'O' if self.player_mark == 'X' else 'X'
+        self.who_hit = 'P' if self.player_mark == 'X' else 'C'
         print('Я тут подкинул монетку. Первый крестиками играешь Ты') if self.player_mark == 'X' else (
             print('Я тут подкинул монетку. Первый крестиками играю Я. Верь мне на слово )))'))
         input('Для продолжения нажмите Enter')
@@ -39,15 +39,13 @@ class NewGame:
         else:
             os.system('clear')
 
-    @staticmethod
-    def player_win():
+    def player_win(self):
         print('Игрок победил!')
-        NewGame.player_score += 1
+        self.player_score += 1
 
-    @staticmethod
-    def computer_win():
+    def computer_win(self):
         print('Компьютер победил!')
-        NewGame.computer_score += 1
+        self.computer_score += 1
 
     def clear_space(self):
         self.place = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]
@@ -68,10 +66,42 @@ class NewGame:
         else:
             print(u' \u2514\u2500\u2534\u2500\u2534\u2500\u2518')
 
+    def create_list_state(self):
+        lst_win = list()
+        lst_win += [''.join(self.place[i][j] for j in range(3)) for i in range(3)]  # Горизонтальные линии
+        lst_win += [''.join(self.place[j][i] for j in range(3)) for i in range(3)]  # Вертикальные линии
+        lst_win.append(''.join(self.place[i][-(i - 2)] for i in range(3)))  # Диагональ от 13 до 31
+        lst_win.append(''.join(self.place[i][i] for i in range(3)))  # Диагональ от 11 до 33
+        return lst_win
 
-game = NewGame()
-print(game.player_mark)
-print(game.computer_mark)
-input()
-game.draw_place()
-input()
+    def control_git(self):
+        pass
+
+    def player_hit(self):
+        pass
+
+    def computer_hit(self):
+        pass
+
+    def check_win(self):
+        return
+
+    def question_exit(self):
+        answer = input('Будем играть еще? (Да(или Enter)/Нет) ')
+        self.exit_game = True if answer == 'Да' or answer == '' else False
+
+    def play(self):
+        while self.exit_game:
+            self.clear_windows()
+            self.clear_space()
+            while True:
+                self.clear_windows()
+                self.draw_place()
+                self.player_hit() if self.who_hit == 'P' else self.computer_hit()
+                self.check_win()
+            self.question_exit()
+
+
+
+game = TicTacToe()
+game.play()
