@@ -5,6 +5,7 @@ import json
 
 
 def clear_windows():
+    """Очищает экран"""
     if os.name == 'nt':
         os.system('cls')
     else:
@@ -12,6 +13,11 @@ def clear_windows():
 
 
 def lst_state(pl):
+    """Разбивает двумерный массив игрового поля на строки по три символа и складывает в список для дальнейшего анализа
+
+    :param pl:
+    :return: lst_win: list() - список состояний строк, столбцов и диагоналей игрового поля
+    """
     lst_win = list()
     lst_win += [''.join(pl[i][j] for j in range(3)) for i in range(3)]  # Горизонтальные линии
     lst_win += [''.join(pl[j][i] for j in range(3)) for i in range(3)]  # Вертикальные линии
@@ -21,6 +27,14 @@ def lst_state(pl):
 
 
 def check_win(pl):
+    """Проверка состояния игрового поля на наличие выигрышной комбинации
+
+    Параметры:
+        pl (): Массив игрового поля
+    Возвращаемое значение:
+        _ bool: Возвращает True если в списке обнаружены последовательности "XXX" или "OOO" обозначающие победу
+                иначе False
+    """
     lst_win = lst_state(pl)
     return 'XXX' in lst_win or 'OOO' in lst_win
 
@@ -100,6 +114,14 @@ def computer_hit(pl, c_h, w_s, c_c):
 
 
 def draw_place(sc, pl, player, w_s):
+    """Рисует игровое поле
+
+    :param sc:
+    :param pl:
+    :param player:
+    :param w_s:
+    :return:
+    """
     clear_windows()
     print(f"Общий счет. {player} {sc['P']} ({w_s['P']}) - 3Ton {sc['C']} ({w_s['C']})")
     print('  1 2 3')
